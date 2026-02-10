@@ -2,8 +2,9 @@ import type { User } from '@/interfaces/user.interface';
 import { create } from 'zustand'
 import { toast } from 'sonner'
 
-import { loginAction } from '../actions/login.actions';
-import { checkAuthAction } from '../actions/check-actions';
+import { loginAction } from '../actions/login.action';
+import { checkAuthAction } from '../actions/check-action';
+import { registerAction } from '../actions/register.action';
 
 type AuthStatus = 'checking' | 'authenticated' | 'not-authenticated';
 
@@ -18,6 +19,7 @@ type AuthState = {
     login(email: string, password: string): Promise<boolean>;
     logout: () => void;
     checkAuthStatus: () => Promise<boolean>;
+    registerUser: (email: string, password: string, fullName: string) => Promise<boolean>;
 }
 
 export const useAuthStore = create<AuthState>()((set, get) => ({
@@ -50,7 +52,27 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
             console.log(error);
             set({ user: null, token: null, authStatus: 'not-authenticated' });
             localStorage.removeItem('token');
-            toast.error('Correo y/o contraseña no válidos!!!', { description: 'Intente nuevamente!' });
+            toast.error('Login: Correo y/o contraseña no válidos!!!', { description: 'Intenta nuevamente!' });
+            return false;
+        }
+    },
+
+    registerUser: async (email: string, password: string, fullName: string) => {
+
+        console.log({ email, password, fullName });
+
+        try {
+            const data = await registerAction(email, password, fullName);
+            localStorage.setItem('token', data.token);
+            set({ user: data.user, token: data.token, authStatus: 'authenticated' });
+            toast.error('Bienvenido!', { description: 'Te has registrado correctamente!' });
+            return true;
+
+        } catch (error) {
+            console.log(error);
+            set({ user: null, token: null, authStatus: 'not-authenticated' });
+            localStorage.removeItem('token');
+            toast.error('Registro: Correo y/o contraseña no válidos!!!', { description: 'Intenta nuevamente!' });
             return false;
         }
     },
