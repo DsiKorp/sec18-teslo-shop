@@ -1,5 +1,4 @@
 // https://github.com/Klerith/bolt-product-editor
-// https://gist.github.com/Klerith/15c09dd610d17b9548de24a01056f828
 
 import { AdminTitle } from '@/admin/components/AdminTitle';
 import { useParams } from 'react-router';
@@ -119,7 +118,6 @@ export const AdminProductPage = () => {
         <>
             <div className="flex justify-between items-center">
                 <AdminTitle title={productTitle} subtitle={productSubtitle} />
-
                 <div className="flex justify-end mb-10 gap-4">
                     <Button variant="outline">
                         <Link to="/admin/products" className="flex items-center gap-2">

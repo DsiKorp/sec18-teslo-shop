@@ -16,7 +16,8 @@ export const CustomHeader = () => {
     const [searchParams, setSearchParams] = useSearchParams();
 
     // get user from auth store
-    const { user, logout } = useAuthStore();
+    //const { user, logout } = useAuthStore();
+    const { authStatus, isAdmin, logout } = useAuthStore();
 
     // route segments that are mandatory in url like /gender/men or /gender/women
     const { gender } = useParams();
@@ -102,7 +103,8 @@ export const CustomHeader = () => {
                     </Button>
 
                     {
-                        !user ? (
+                        // !user ? (
+                        authStatus === 'not-authenticated' ? (
                             <Link to="/auth/login">
                                 <Button variant="default" size="sm" className="ml-2">
                                     Login
@@ -117,11 +119,17 @@ export const CustomHeader = () => {
                         )
                     }
 
-                    <Link to="/admin">
-                        <Button variant="destructive" size="sm" className="ml-2">
-                            Admin
-                        </Button>
-                    </Link>
+                    {
+                        isAdmin() && (
+                            <Link to="/admin">
+                                <Button variant="destructive" size="sm" className="ml-2">
+                                    Admin
+                                </Button>
+                            </Link>
+                        )
+                    }
+
+
 
                     {/* <Button variant="ghost" size="icon" className="relative">
                         <ShoppingBag className="h-5 w-5" />

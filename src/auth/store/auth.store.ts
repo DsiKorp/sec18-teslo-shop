@@ -3,26 +3,36 @@ import { create } from 'zustand'
 import { toast } from 'sonner'
 
 import { loginAction } from '../actions/login.actions';
+import { checkAuthAction } from '../actions/check-actions';
 
 type AuthStatus = 'checking' | 'authenticated' | 'not-authenticated';
 
 type AuthState = {
     // Properties
-    user: User | null,
-    token: string | null,
-    status: AuthStatus,
+    user: User | null;
+    token: string | null;
+    authStatus: AuthStatus;
     // Getters
-    //isAdmin: boolean,
+    isAdmin: () => boolean;
     // Actions
-    login(email: string, password: string): Promise<boolean>,
-    logout: () => void,
+    login(email: string, password: string): Promise<boolean>;
+    logout: () => void;
+    checkAuthStatus: () => Promise<boolean>;
 }
 
-export const useAuthStore = create<AuthState>()((set) => ({
+export const useAuthStore = create<AuthState>()((set, get) => ({
     // Store implementation
     user: null,
     token: null,
-    status: 'checking',
+    authStatus: 'checking',
+
+    // Getters
+    isAdmin: () => {
+        //const roles = get().user?.roles || [];
+        //return roles.includes('admin');
+        // !! convert undefined to boolean to prevent error: Type 'boolean | undefined' is not assignable to type 'boolean'.
+        return !!get().user?.roles.includes('admin');
+    },
 
     // Actions
     login: async (email: string, password: string) => {
@@ -32,25 +42,39 @@ export const useAuthStore = create<AuthState>()((set) => ({
         try {
             const data = await loginAction(email, password);
             localStorage.setItem('token', data.token);
-            set({ user: data.user, token: data.token });
+            set({ user: data.user, token: data.token, authStatus: 'authenticated' });
             toast.error('Bienvenido!', { description: 'Has iniciado sesión correctamente!' });
-            set({ status: 'authenticated' });
             return true;
 
         } catch (error) {
             console.log(error);
-            set({ user: null, token: null });
+            set({ user: null, token: null, authStatus: 'not-authenticated' });
             localStorage.removeItem('token');
             toast.error('Correo y/o contraseña no válidos!!!', { description: 'Intente nuevamente!' });
-            set({ status: 'not-authenticated' });
             return false;
         }
     },
 
     logout: () => {
         localStorage.removeItem('token');
-        set({ user: null, token: null });
+        set({ user: null, token: null, authStatus: 'not-authenticated' });
         toast.error('Hasta luego!', { description: 'Has cerrado sesión correctamente!' });
-        set({ status: 'not-authenticated' });
+
+    },
+
+    checkAuthStatus: async () => {
+        try {
+            const { user, token } = await checkAuthAction();
+            set({ user, token, authStatus: 'authenticated' });
+            localStorage.setItem('token', token);
+            return true;
+        } catch (error) {
+
+            console.log(error);
+            set({ user: null, token: null, authStatus: 'not-authenticated' });
+            localStorage.removeItem('token');
+            toast.error('Error: Correo y/o contraseña no válidos!!!', { description: 'Intente nuevamente!' });
+            return false;
+        }
     }
 }));
