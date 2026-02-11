@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import type { Size } from "@/interfaces/product.interface";
+import { currencyFormatter } from "@/lib/currency-formatter";
 
 interface ProductCardProps {
     name: string;
@@ -33,7 +34,7 @@ export const ProductCard = ({ name, price, image, category, sizes }: ProductCard
                     </div>
 
                     <div className="flex items-center justify-between">
-                        <p className="font-semibold text-lg">${price}</p>
+                        <p className="font-semibold text-lg">${currencyFormatter(price)}</p>
                         <Button
                             size="sm"
                             variant="outline"
