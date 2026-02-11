@@ -69,7 +69,7 @@ export const AdminHeader: React.FC = () => {
           {
             // !user ? (
             authStatus === 'authenticated' ? (
-              <Button variant="default" size="sm" className="ml-2"
+              <Button variant="default" size="sm" className="bg-gradient-to-br from-blue-500 to-purple-600 ml-2"
                 onClick={logout}
               >
                 Cerrar sesión

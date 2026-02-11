@@ -36,7 +36,7 @@ export const AdminProductsPage = () => {
 
                 <div className="flex justify-end mb-10 gap-4">
                     <Link to="/admin/products/new">
-                        <Button><PlusIcon />Nuevo producto</Button>
+                        <Button className="bg-gradient-to-br from-blue-500 to-purple-600"><PlusIcon />Nuevo producto</Button>
                     </Link>
                 </div>
 
@@ -90,24 +90,8 @@ export const AdminProductsPage = () => {
                         ))
                     }
 
-                    {/* <TableRow>
-                        <TableCell className="font-medium">1</TableCell>
-                        <TableCell>
-                            <img
-                                src="https://placehold.co/250x250"
-                                alt="Product"
-                                className="w-20 h-20 object-cover rounded-md"
-                            />
-                        </TableCell>
-                        <TableCell>Producto 1</TableCell>
-                        <TableCell>$205.00</TableCell>
-                        <TableCell>Categoria Electronica</TableCell>
-                        <TableCell>20 sotck</TableCell>
-                        <TableCell>XS, S, M, L, XL</TableCell>
-                        <TableCell className="text-right">
-                            <Link to="/admin/products/1">Editar</Link>
-                        </TableCell>
-                    </TableRow> */}
+                    {/* https://placehold.co/250x250 */}
+
                 </TableBody>
             </Table>
 
