@@ -1,17 +1,18 @@
 // https://github.com/Klerith/bolt-product-editor
+import { Navigate, useNavigate, useParams } from 'react-router';
+import { toast } from 'sonner';
 
-import { Navigate, useParams } from 'react-router';
-
-import { useQueryProduct } from '@/admin/hooks/useQueryProduct';
+import { useProduct } from '@/admin/hooks/useProduct';
 import { CustomFullScreenLoading } from '@/components/custom/CustomFullScreenLoading';
 import { ProductForm } from './ui/ProductForm';
+import type { Product } from '@/interfaces/product.interface';
 
 export const AdminProductPage = () => {
     const { id } = useParams();
+    console.log({ id });
+    const navigate = useNavigate();
 
-    const { isLoading, isError, error, data: product } = useQueryProduct(id || '');
-
-    console.log({ isLoading, product, isError, error })
+    const { isLoading, isError, data: product, mutation } = useProduct(id || '');
 
     const title = id === 'new' ? 'Nuevo producto' : 'Editar producto';
     const subtitle =
@@ -19,49 +20,44 @@ export const AdminProductPage = () => {
             ? 'Aquí puedes crear un nuevo producto.'
             : 'Aquí puedes editar el producto.';
 
-    // const [product, setProduct] = useState<Product>({
-    //     id: '376e23ed-df37-4f88-8f84-4561da5c5d46',
-    //     title: "Men's Raven Lightweight Hoodie",
-    //     price: 115,
-    //     description:
-    //         "Introducing the Tesla Raven Collection. The Men's Raven Lightweight Hoodie has a premium, relaxed silhouette made from a sustainable bamboo cotton blend. The hoodie features subtle thermoplastic polyurethane Tesla logos across the chest and on the sleeve with a french terry interior for versatility in any season. Made from 70% bamboo and 30% cotton.",
-    //     slug: 'men_raven_lightweight_hoodie',
-    //     stock: 10,
-    //     sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
-    //     gender: 'men',
-    //     tags: ['hoodie'],
-    //     images: [
-    //         'https://placehold.co/250x250',
-    //         'https://placehold.co/250x250',
-    //         'https://placehold.co/250x250',
-    //         'https://placehold.co/250x250',
-    //     ],
-    // });
-
-    //const [newTag, setNewTag] = useState('');
-
-    //const availableSizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
+    const handleSubmit = async (productLike: Partial<Product>) => {
+        await mutation.mutateAsync(productLike, {
+            onSuccess: (data) => {
+                toast.success(`Producto ${id === 'new' ? 'Creado' : 'Actualizado'} correctamente`, {
+                    description: `Se ha ${id === 'new' ? 'creado' : 'actualizado'} el producto correctamente!`,
+                    position: 'top-right',
+                });
+                navigate(`/admin/products/${data.id}`);
+            },
+            onError: (error) => {
+                console.log(error);
+                toast.error(`Error al ${id === 'new' ? 'crear' : 'actualizar'} el producto`, {
+                    description: `Error al ${id === 'new' ? 'crear' : 'actualizar'} el producto, ${error}`,
+                    position: 'top-right'
+                });
+            },
+        });
+    };
 
     if (isError) {
-        return <Navigate to="/admin/products" />
+        return <Navigate to="/admin/products" />;
     }
 
     if (isLoading) {
-        return <CustomFullScreenLoading />
+        return <CustomFullScreenLoading />;
     }
-
-    // const handleInputChange = (field: keyof Product, value: string | number) => {
-    //     setProduct((prev) => ({ ...prev, [field]: value }));
-    // };
 
     if (!product) {
-        return <Navigate to="/admin/products" />
+        return <Navigate to="/admin/products" />;
     }
 
-    return <ProductForm
-        title={title}
-        subTitle={subtitle}
-        product={product}
-    />
-
+    return (
+        <ProductForm
+            title={title}
+            subTitle={subtitle}
+            product={product}
+            onSubmit={handleSubmit}
+            isPending={mutation.isPending}
+        />
+    );
 };

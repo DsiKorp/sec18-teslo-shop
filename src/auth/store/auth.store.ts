@@ -45,7 +45,7 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
             const data = await loginAction(email, password);
             localStorage.setItem('token', data.token);
             set({ user: data.user, token: data.token, authStatus: 'authenticated' });
-            toast.error('Bienvenido!', { description: 'Has iniciado sesión correctamente!' });
+            toast.success('Bienvenido!', { description: 'Has iniciado sesión correctamente!' });
             return true;
 
         } catch (error) {
@@ -65,7 +65,7 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
             const data = await registerAction(email, password, fullName);
             localStorage.setItem('token', data.token);
             set({ user: data.user, token: data.token, authStatus: 'authenticated' });
-            toast.error('Bienvenido!', { description: 'Te has registrado correctamente!' });
+            toast.success('Bienvenido!', { description: 'Te has registrado correctamente!' });
             return true;
 
         } catch (error) {
@@ -80,7 +80,7 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
     logout: () => {
         localStorage.removeItem('token');
         set({ user: null, token: null, authStatus: 'not-authenticated' });
-        toast.error('Hasta luego!', { description: 'Has cerrado sesión correctamente!' });
+        toast.success('Hasta luego!', { description: 'Has cerrado sesión correctamente!' });
 
     },
 
