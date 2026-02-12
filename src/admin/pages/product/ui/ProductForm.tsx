@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router';
 
 import { useForm } from 'react-hook-form';
@@ -6,7 +6,7 @@ import { useForm } from 'react-hook-form';
 import { AdminTitle } from '@/admin/components/AdminTitle';
 
 import { Button } from '@/components/ui/button';
-import type { Product, Size } from '@/interfaces/product.interface';
+import type { FormInputs, Product, Size } from '@/interfaces/product.interface';
 import { X, SaveAll, Tag, Plus, Upload } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -17,19 +17,18 @@ interface Props {
     isPending: boolean;
 
     // Methods
-    onSubmit: (productLike: Partial<Product>) => Promise<void>;
+    onSubmit: (productLike: Partial<Product> & { files?: File[] }) => Promise<void>;
 }
 
 const availableSizes: Size[] = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
 
-export const ProductForm = ({
-    title,
-    subTitle,
-    product,
-    onSubmit,
-    isPending,
-}: Props) => {
+
+
+export const ProductForm = ({ title, subTitle, product, onSubmit, isPending }: Props) => {
+
+    // Images part
     const [dragActive, setDragActive] = useState(false);
+
     const {
         register,
         handleSubmit,
@@ -37,11 +36,15 @@ export const ProductForm = ({
         getValues,
         setValue,
         watch,
-    } = useForm({
-        defaultValues: product,
-    });
+    } = useForm<FormInputs>({ defaultValues: product });
 
     const labelInputRef = useRef<HTMLInputElement>(null);
+    const [files, setFiles] = useState<File[]>([]);
+
+    // Reset files when product changes
+    useEffect(() => {
+        setFiles([]);
+    }, [product]);
 
     const selectedSizes = watch('sizes');
     const selectedTags = watch('tags');
@@ -91,11 +94,26 @@ export const ProductForm = ({
         setDragActive(false);
         const files = e.dataTransfer.files;
         console.log(files);
+
+        if (!files) return;
+
+        // Update files state maintaining previous files
+        setFiles(prev => [...prev, ...Array.from(files)]);
+
+        const currentFiles = getValues('files') || [];
+        setValue('files', [...currentFiles, ...Array.from(files)]);
     };
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = e.target.files;
         console.log(files);
+
+        if (!files) return;
+
+        // Update files state maintaining previous files
+        setFiles(prev => [...prev, ...Array.from(files)]);
+        const currentFiles = getValues('files') || [];
+        setValue('files', [...currentFiles, ...Array.from(files)]);
     };
 
     return (
@@ -110,7 +128,7 @@ export const ProductForm = ({
                         </Link>
                     </Button>
 
-                    <Button type="submit" disabled={isPending}>
+                    <Button type="submit" disabled={isPending} className="bg-gradient-to-br from-blue-500 to-purple-600">
                         <SaveAll className="w-4 h-4" />
                         Guardar cambios
                     </Button>
@@ -432,6 +450,36 @@ export const ProductForm = ({
                                             </p>
                                         </div>
                                     ))}
+                                </div>
+                            </div>
+
+                            {/* Images to load */}
+                            <div className={
+                                cn(
+                                    'mt-6 space-y-3', {
+                                    hidden: files.length === 0
+                                })
+                            }>
+                                <h3 className="text-sm font-medium text-slate-700">
+                                    Imágenes por cargar
+                                </h3>
+                                <div className="grid grid-cols-2 gap-3">
+                                    {
+                                        files.map((file, index) => (
+                                            <img
+                                                key={index}
+                                                src={URL.createObjectURL(file)}
+                                                alt="Product"
+                                                className="w-full h-full object-cover rounded-lg"
+                                            />
+                                        ))
+                                    }
+
+                                    {files.length === 0 && (
+                                        <p className="text-sm text-slate-500">
+                                            No hay archivos seleccionados
+                                        </p>
+                                    )}
                                 </div>
                             </div>
                         </div>

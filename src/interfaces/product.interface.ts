@@ -14,5 +14,9 @@ export interface Product {
     user: User;
 }
 
+export interface FormInputs extends Product {
+    files?: File[];
+}
+
 export type Size = "L" | "M" | "S" | "XL" | "XS" | "XXL";
 export type Gender = "kid" | "men" | "women" | "unisex";

@@ -28,7 +28,7 @@ export const AdminSidebar: React.FC<SidebarProps> = ({ isCollapsed, onToggle }) 
 
   // Get current location or pathname
   const { pathname } = useLocation();
-  console.log({ pathname });
+  // console.log({ pathname });
 
   const menuItems = [
     //{ icon: Home, label: 'Dashboard', active: true },

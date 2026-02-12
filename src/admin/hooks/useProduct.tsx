@@ -14,6 +14,8 @@ export const useProduct = (id: string) => {
         // enabled: !!id  // The request will continue to be triggered until it has an ID.
     });
 
+    // con el useMutation se especifica cuando se va a llamar a la función createUpdateProductAction
+    // no se llama directamente, sino que se llama cuando se hace submit del formulario con el mutateAsync
     const mutation = useMutation({
         mutationFn: createUpdateProductAction,
         onSuccess: (product: Product) => {

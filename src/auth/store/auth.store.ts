@@ -95,7 +95,7 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
             console.log(error);
             set({ user: null, token: null, authStatus: 'not-authenticated' });
             localStorage.removeItem('token');
-            toast.error('Error: Correo y/o contraseña no válidos!!!', { description: 'Intente nuevamente!' });
+            //toast.error('Error: Correo y/o contraseña no válidos!!!', { description: 'Intente nuevamente!' });
             return false;
         }
     }

@@ -122,7 +122,7 @@ export const CustomHeader = () => {
                     {
                         isAdmin() && (
                             <Link to="/admin">
-                                <Button variant="destructive" size="sm" className="ml-2">
+                                <Button variant="destructive" size="sm" className="ml-2 bg-gradient-to-br from-blue-500 to-purple-600 ml-2">
                                     Admin
                                 </Button>
                             </Link>
