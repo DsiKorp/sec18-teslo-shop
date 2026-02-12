@@ -1,4 +1,5 @@
-import { useCountStore } from "@/auth/store/auth.store";
+
+import { useCountStore } from "@/auth/store/counter.store";
 import { Button } from "@/components/ui/button"
 
 
