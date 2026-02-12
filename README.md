@@ -7,3 +7,7 @@
 3. Run the `npm install` command to install the dependencies
 4. Make sure the backend is running on port **3000**
 5. Run the `npm run dev` command to start the development server
+
+
+Production:
+https://awesome-teslo-shop-react.netlify.app/
