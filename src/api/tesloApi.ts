@@ -15,4 +15,5 @@ tesloApi.interceptors.request.use((config) => {
     return config;
 });
 
+//export default tesloApi;
 export { tesloApi };
